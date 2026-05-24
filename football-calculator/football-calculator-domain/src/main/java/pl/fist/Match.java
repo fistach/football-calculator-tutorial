@@ -12,4 +12,13 @@ public class Match {
         this.teamAGoals = teamAGoals;
         this.teamBGoals = teamBGoals;
     }
+
+    public boolean hasTeam(Team team) {
+        return a.equals(team) || b.equals(team);
+    }
+
+    public boolean teamWon(Team team) {
+        return (a.equals(team) && teamAGoals > teamBGoals) ||
+                (b.equals(team) && teamBGoals > teamAGoals);
+    }
 }
