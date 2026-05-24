@@ -3,6 +3,7 @@ package pl.fist;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,20 +14,29 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 public class LeagueTableCalculatorTest {
 
-    @Test
-    void shouldNotChangeTeamPointsWhenThereWereNoGamesPlayed() {
-        //given
-        TeamRepository teamRepository = mock(TeamRepository.class);
-        MatchRepository matchRepository = mock(MatchRepository.class);
+    private TeamRepository teamRepository;
+    private MatchRepository matchRepository;
+    private UpdateLeagueTableService service;
+    private List<Team> teams;
 
-        List<Team> teams = List.of(new Team("FC club", 0),
+    @BeforeEach
+    void setUp() {
+        teamRepository = mock(TeamRepository.class);
+        matchRepository = mock(MatchRepository.class);
+
+        teams = List.of(new Team("FC club", 0),
                 new Team("Club 2", 3));
 
         when(teamRepository.findAll()).thenReturn(teams);
 
-        when(matchRepository.findAll()).thenReturn(List.of());
-        UpdateLeagueTableService service = new UpdateLeagueTableService(teamRepository,
+        service = new UpdateLeagueTableService(teamRepository,
                 matchRepository);
+    }
+
+    @Test
+    void shouldNotChangeTeamPointsWhenThereWereNoGamesPlayed() {
+        //given
+        when(matchRepository.findAll()).thenReturn(List.of());
 
         //when
         List<Team> result = service.calculate();
@@ -39,19 +49,9 @@ public class LeagueTableCalculatorTest {
     @Test
     void shouldAdd3PointsToTheWinningTeam() {
         //given
-        TeamRepository teamRepository = mock(TeamRepository.class);
-        MatchRepository matchRepository = mock(MatchRepository.class);
-
-        List<Team> teams = List.of(new Team("FC club", 0),
-                new Team("Club 2", 3));
-
-        when(teamRepository.findAll()).thenReturn(teams);
-
         List<Match> matches = List.of(new Match(teams.get(0), teams.get(1), 3, 1));
 
         when(matchRepository.findAll()).thenReturn(matches);
-        UpdateLeagueTableService service = new UpdateLeagueTableService(teamRepository,
-                matchRepository);
 
         //when
         List<Team> result = service.calculate();
