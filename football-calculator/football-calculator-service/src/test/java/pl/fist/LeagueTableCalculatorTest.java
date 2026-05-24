@@ -58,6 +58,20 @@ public class LeagueTableCalculatorTest {
 
         //then
         assertEquals(3, result.get(0).points);
+    }
+
+    @Test
+    void shouldNotAddPointsToTheLosingTeam() {
+        //given
+        List<Match> matches = List.of(new Match(teams.get(0), teams.get(1), 3, 0));
+
+        when(matchRepository.findAll()).thenReturn(matches);
+
+        //when
+        List<Team> result = service.calculate();
+
+        //then
         assertEquals(3, result.get(1).points);
     }
+
 }
